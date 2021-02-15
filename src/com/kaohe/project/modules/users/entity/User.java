@@ -26,7 +26,7 @@ public class User {
     private Date updateTime;
 
     private String remake;
-
+    private String code;
     private Date lastLoginTime;
     
     
@@ -171,6 +171,15 @@ public class User {
 
 	public void setMenus(List<Menu> menus) {
 		this.menus = menus;
+	}
+
+	
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 	@Override

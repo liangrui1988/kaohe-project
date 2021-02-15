@@ -43,8 +43,9 @@ public class UserLogin extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doPost(request, response);
+		RequestDispatcher dispatcher = request.getRequestDispatcher("/noGet.jsp");
+		dispatcher.forward(request, response);
+
 	}
 
 	/**
@@ -77,7 +78,6 @@ public class UserLogin extends HttpServlet {
 				dispatcher.forward(request, response);
 				return;
 			}
-
 			HttpSession session = request.getSession();
 			session.setMaxInactiveInterval(60 * 2);
 			// 用户登录错3次，禁用用户
@@ -90,7 +90,6 @@ public class UserLogin extends HttpServlet {
 				dispatcher.forward(request, response);
 				return;
 			}
-
 			UserBean userbean = userdao.getUser(username, MD5.generateMd5(password));
 			if (userbean == null || userbean.getId() == null || userbean.getId() <= 0) {
 				session.setAttribute("loginCount_" + username, loginCount + 1);
@@ -104,8 +103,13 @@ public class UserLogin extends HttpServlet {
 				request.setAttribute("tips", "登录失败，用户或密码不存在！");
 				dispatcher.forward(request, response);
 			} else {
-				if (userbean.getStatus() != 0) {
+				if (userbean.getStatus()== 1) {
 					request.setAttribute("tips", "用户已被禁用，请遇管理员联系！");
+					dispatcher.forward(request, response);
+					return;
+				}
+				if (userbean.getStatus()==-1) {
+					request.setAttribute("tips", "用户还没有进行邮箱验证，请完登录邮箱打开链接进行验证！");
 					dispatcher.forward(request, response);
 					return;
 				}

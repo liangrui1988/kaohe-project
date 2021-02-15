@@ -52,6 +52,8 @@ public interface IUsersDao {
 
 	int update(String userName,int status) throws Exception;
 	
+	public int updateByCode(String code) throws Exception ;
+	
 	UserBean getUser(String username) throws Exception;
 	
 	UserBean getUser(String username,String password) throws Exception;

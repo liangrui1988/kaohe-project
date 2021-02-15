@@ -158,9 +158,9 @@ public class UsersDaoImpl extends BaseDao implements IUsersDao {
 	public int add(User user) throws Exception {
 		int result = 0;
 		try {
-			Object[] partObj = { user.getUserName(), user.getPassword(), user.getEmail(), 0 };
+			Object[] partObj = { user.getUserName(), user.getPassword(), user.getEmail(), -1,user.getCode() };
 			StringBuffer sql = new StringBuffer(512);
-			sql.append("INSERT INTO `sys_user`(`user_name`, `password`,  `email`, `status`) VALUES (?,?,?,?)");
+			sql.append("INSERT INTO `sys_user`(`user_name`, `password`,  `email`, `status`,`code`) VALUES (?,?,?,?,?)");
 			int id = this.insertGetId(sql.toString(), partObj);
 			// 加入角色
 			if (id > 0) {
@@ -204,7 +204,7 @@ public class UsersDaoImpl extends BaseDao implements IUsersDao {
 	
 	
 	/**
-	 * 更改用户
+	 * 更改用户,根据名字
 	 */
 	@Override
 	public int update(String userName,int status) throws Exception {
@@ -222,6 +222,24 @@ public class UsersDaoImpl extends BaseDao implements IUsersDao {
 		return result;
 	}
 
+	/**
+	 * 更改用户
+	 */
+	@Override
+	public int updateByCode(String code) throws Exception {
+		int result = 0;
+		try {
+			Object[] partObj = { code };
+			String sql = "update sys_user set status=0   where code=?";
+			result = this.update(sql.toString(), partObj);
+		} catch (Exception e) {
+			logger.error("用户更新数据异常", e.getMessage());
+			throw new Exception(e);
+		} finally {
+			this.close();
+		}
+		return result;
+	}
 	@Override
 	public UserBean getUser(String username) throws Exception {
 		UserBean userbean = new UserBean();

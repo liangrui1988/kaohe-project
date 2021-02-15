@@ -90,7 +90,7 @@
 								</div>
 
 
-								<div class="field-group">
+					<!-- 			<div class="field-group">
 									<label class="required title">邮箱验证码</label> <span
 										class="control-group" id="code_input">
 										<div class="input_add_background" style="margin-right: 15px;">
@@ -99,7 +99,7 @@
 												onblur="checkAuthCode(this.value);">
 										</div>
 									</span> <label class="tips">若尝试多次仍无法接收到验证码，请您联系在线客服帮您开通账号</label>
-								</div>
+								</div> -->
 							</div>
 						</div>
 						<div id="div_submit" class="div_submit">
