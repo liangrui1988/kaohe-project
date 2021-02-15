@@ -17,7 +17,9 @@ import com.kaohe.project.modules.users.dao.bean.UserBean;
 import com.kaohe.project.modules.users.dao.impl.UsersDaoImpl;
 
 /**
- * Servlet implementation class UserList
+ * 用户列表管理页面
+ * @author liangrui
+ * @date 2021-02-09
  */
 @WebServlet("/UserList")
 public class UserList extends HttpServlet {
@@ -43,17 +45,18 @@ public class UserList extends HttpServlet {
         
 		String pageIndex = request.getParameter("pageIndex");
 		String pagesize = request.getParameter("pagesize");
-		
+		String userName = request.getParameter("userName");
 		if(pageIndex==null||"".equals(pageIndex)) {
 			pageIndex="0";
 		}
 		if(pagesize==null||"".equals(pagesize)) {
 			pagesize="20";
 		}
-        
+		UserBean bean=new UserBean();
+		bean.setUserName(userName);
         QueryResult<UserBean> result = new QueryResult<UserBean>();
 		try {
-			result = userdao.getUserList(Integer.valueOf(pageIndex),Integer.valueOf(pagesize) , new UserBean());
+			result = userdao.getUserList(Integer.valueOf(pageIndex),Integer.valueOf(pagesize) , bean);
 		} catch (Exception e) {
 			rb.setSuccess(false);
 			rb.setMessage("系统异常!"+e.getMessage());

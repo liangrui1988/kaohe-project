@@ -50,6 +50,8 @@ public interface IUsersDao {
 	 */
 	int update(User user) throws Exception;
 
+	int update(String userName,int status) throws Exception;
+	
 	UserBean getUser(String username) throws Exception;
 	
 	UserBean getUser(String username,String password) throws Exception;

@@ -22,7 +22,8 @@
 <title>用户注册</title>
 </head>
 <body>
-
+   <a href="<%=basePath%>/ShowUserLongin">已注册，我要登录</a>
+     <br/>
 	<div class='body_main'>
 		<!-- start main content -->
 		<div class='index_box' style='margin-top: 20px;'>

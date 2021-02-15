@@ -1,0 +1,5 @@
+eclipse.preferences.version=1
+encoding//WebContent/WEB-INF/index.jsp=UTF-8
+encoding//WebContent/WEB-INF/modules/users/register.jsp=UTF-8
+encoding//WebContent/WEB-INF/modules/users/updateUser.jsp=UTF-8
+encoding//src/com/kaohe/project/modules/common/page/Query.java=UTF-8

@@ -18,24 +18,32 @@
 
 <script src=" <%=basePath%>/resources/js/jquery/jquery-3.5.1.min.js"></script>
 <script src=" <%=basePath%>/resources/js/common.js"></script>
-
+<style>
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+</style>
 </head>
 
 <body>
      ${tips}<br/>
+     <a href="<%=basePath%>/ShowIndex">首页</a>
+     <br/>
         <form action="" class="breadcrumb form-search " id="_search_form">
              &nbsp;登陆名: <input class="input-xlarge" name="userName"  id="_userName" type="text" />
 			 &nbsp;<input id="_search_submit" class="btn btn-primary" type="button" value="查询"/>
 		</form>
-
+<br/>
 	<div class="panel panel-default">
-		<table id="_user_table" class="table table-striped">
+		<table id="_user_table" class="table table-striped"  b>
 			<thead>
 				<tr>
 					<th width="10%">序号</th>
 					<th width="10%">id</th>
-					<th width="20%">用户名</th>
-					<th width="20%">状态</th>
+					<th width="10%">用户名</th>
+					<th width="10%">状态</th>
+					<th width="20%">邮箱</th>
 					<th width="20%">创建时间</th>
 					<th width="20%">操作</th>
 				</tr>
@@ -80,13 +88,27 @@ function callbak_page(returnDatas)
 	}
 	for (var i = 0; i < returnData.length; i++) {
 	var j=i;
+	var statusname="启用"
+	if(returnData[i].status==1){
+		statusname="禁用"
+	}
+	
+	var date = new Date(returnData[i].createTime);
+	Y = date.getFullYear() + '-';
+	M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+	D = date.getDate() + ' ';
+	h = date.getHours() + ':';
+	m = date.getMinutes() + ':';
+	s = date.getSeconds(); 
+	var cdate=Y+M+D+h+m+s; //呀麻碟
+	
 	//状态处理
 	//var sta=returnData[i].status;
 	var staName="";
 	//<a href="#">查看</a>
 	var operation=''
 				   +'&nbsp;&nbsp;<a href="<%=basePath%>/ShowUpdateUser?id='+returnData[i].id+'">修改</a>'
-				   +'&nbsp;&nbsp;<a href="#" onclick="delUser(this,'+returnData[i].id+')">删除</a>';
+				  /*  +'&nbsp;&nbsp;<a href="#" onclick="delUser(this,'+returnData[i].id+')">删除</a>'; */
 				   
 	tableHTML += "<tr>" + "<td>"
 				+ (j + 1)
@@ -98,12 +120,15 @@ function callbak_page(returnDatas)
 				+ returnData[i].userName
 				+ "</td>"										
 				+ "<td>"
-				+ returnData[i].status
+				+ statusname
 				+ "</td>"
 				+ "<td>"
-				+ returnData[i].createTime
-				+ "</td>"						
+				+ returnData[i].email
+				+ "</td>"
 				+ "<td>"
+				+ 	cdate
+				+ "</td>"						
+				+ "<td>" 
 				+operation									
 				+"</td>" 
 				+ "</tr>"

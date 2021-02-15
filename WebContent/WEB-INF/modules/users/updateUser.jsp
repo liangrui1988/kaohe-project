@@ -54,8 +54,6 @@ $(function(){
 
 function initUpdate(){
 	var id=getUrlParam("id");
-	alert(id)
-	
 	if(id==null||id==""){
 		alert("参数异常，无法修改！");
 		return;
@@ -139,7 +137,7 @@ $(document).ready(function() {
 			  	}
 			  	  alert("操作成功");
 // 			  	swal("Good job!", "You clicked the button!", "success");
-			  location.href="<%=basePath%>/UserList?tips=1";
+			  location.href="<%=basePath%>/ShowManager?tips='修改成功'";
 			}
 		});
 		
@@ -200,7 +198,7 @@ $(document).ready(function() {
             <div class="form-group">
                <label class="col-sm-1 control-label ">邮箱：</label>
                <div class="col-sd-1">
-                  <input  type="text"  maxlength="30"  name="email" id="_email"/>
+                  <input  type="text"  maxlength="30"  name="email" id="_email" readonly="readonly"/>
                </div>
             </div>
          

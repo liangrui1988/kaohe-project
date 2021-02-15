@@ -10,7 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class ShowManager
+ * 显示管理页面
+ * @author liangrui
+ * @date 2021-02-09
  */
 @WebServlet("/ShowManager")
 public class ShowManager extends HttpServlet {

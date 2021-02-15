@@ -2,6 +2,8 @@ package com.kaohe.project.modules.users.dao.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -36,6 +38,7 @@ public class UsersDaoImpl extends BaseDao implements IUsersDao {
 		QueryResult<UserBean> queryResult = new QueryResult<UserBean>();
 		Object[] parmObj = { page, pagesize };
 		Object[] parmObjCount = {};
+
 		try {
 			// 查询列表
 			StringBuffer sql = new StringBuffer(512);
@@ -44,11 +47,11 @@ public class UsersDaoImpl extends BaseDao implements IUsersDao {
 			StringBuffer sqlCount = new StringBuffer(512);
 			sqlCount.append("select count(1) from sys_user");
 			// 条件处理
-			if (user != null && user.getStatus() != null) {
-				sql.append(" where status=? ");
-				sqlCount.append(" where status=? ");
-				parmObj = new Object[] { user.getStatus(), page, pagesize };
-				parmObjCount = new Object[] { user.getStatus() };
+			if (user != null && user.getUserName() != null && !"".equals(user.getUserName())) {
+				sql.append(" where user_name like '"+user.getUserName()+"%' ");
+				sqlCount.append(" where user_name like '"+user.getUserName()+"%' ");
+//				parmObj = new Object[] { page, pagesize };
+//				parmObjCount = new Object[] {  };
 			}
 			// 分页
 			sql.append(" order by id  ");
@@ -56,21 +59,25 @@ public class UsersDaoImpl extends BaseDao implements IUsersDao {
 			logger.info("sql>>> \n" + sql.toString());
 			ResultSet result = select(sql.toString(), parmObj);
 			List<UserBean> userBeans = new ArrayList<UserBean>();
-			while (result.next()) {
-				UserBean userbean = new UserBean();
-				userbean.setId(result.getInt("id"));
-				userbean.setUserName(result.getString("user_name"));
-				userbean.setStatus(result.getInt("status"));
-				userbean.setEmail(result.getString("email"));
-				userbean.setCreateTime(result.getDate("create_time"));
-				userBeans.add(userbean);
+			// DateFormat df = new SimpleDateFormat("YYYY-mm-DD HH:MM:SS");
+			if (result != null) {
+				while (result.next()) {
+					UserBean userbean = new UserBean();
+					userbean.setId(result.getInt("id"));
+					userbean.setUserName(result.getString("user_name"));
+					userbean.setStatus(result.getInt("status"));
+					userbean.setEmail(result.getString("email"));
+					// String cdate=df.format(result.getDate("create_time"));
+					userbean.setCreateTime(result.getTimestamp("create_time"));
+					userBeans.add(userbean);
+				}
 			}
 			// 总页数 和 取多少条
 			int count = this.getCount(sqlCount.toString(), parmObjCount);
 			queryResult.setPages(count, pagesize);
 			queryResult.setItems(userBeans);
 		} catch (Exception e) {
-			logger.error("用户查询数据异常:"+e.getMessage());
+			logger.error("用户查询数据异常:" + e.getMessage());
 			e.printStackTrace();
 			throw new Exception(e);
 		} finally {
@@ -151,16 +158,16 @@ public class UsersDaoImpl extends BaseDao implements IUsersDao {
 	public int add(User user) throws Exception {
 		int result = 0;
 		try {
-			Object[] partObj = { user.getUserName(), user.getPassword(),user.getEmail(),0};
+			Object[] partObj = { user.getUserName(), user.getPassword(), user.getEmail(), 0 };
 			StringBuffer sql = new StringBuffer(512);
 			sql.append("INSERT INTO `sys_user`(`user_name`, `password`,  `email`, `status`) VALUES (?,?,?,?)");
-			int id= this.insertGetId(sql.toString(), partObj);
-			//加入角色
-			if(id>0) {
-				Object[] rParm = {id,2};
-				String roleSql="INSERT INTO `sys_user_role`(`user_id`, `role_id`) VALUES (?,?)";
-				int result2 = this.update(roleSql.toString(),rParm);
-				result+=result2;
+			int id = this.insertGetId(sql.toString(), partObj);
+			// 加入角色
+			if (id > 0) {
+				Object[] rParm = { id, 2 };
+				String roleSql = "INSERT INTO `sys_user_role`(`user_id`, `role_id`) VALUES (?,?)";
+				int result2 = this.update(roleSql.toString(), rParm);
+				result += result2;
 			}
 		} catch (Exception e) {
 			logger.error("用户注册数据异常", e.getMessage());
@@ -178,13 +185,33 @@ public class UsersDaoImpl extends BaseDao implements IUsersDao {
 	public int update(User user) throws Exception {
 		int result = 0;
 		try {
-			String password=user.getPassword();
-			Object[] partObj = { user.getStatus(),user.getEmail(), user.getId() };
-			String sql="update sys_user set status=? and email=?  where id=?";
+			String password = user.getPassword();
+			Object[] partObj = { user.getStatus(), user.getEmail(), user.getId() };
+			String sql = "update sys_user set status=? and email=?  where id=?";
 			if (password != null && !password.equals("")) {
-				partObj = new Object[]{ user.getStatus(),user.getPassword(),user.getEmail(), user.getId() };
-				sql="update sys_user set status=? and password=? and email=? where id=?";
+				partObj = new Object[] { user.getStatus(), user.getPassword(), user.getEmail(), user.getId() };
+				sql = "update sys_user set status=? and password=? and email=? where id=?";
 			}
+			result = this.update(sql.toString(), partObj);
+		} catch (Exception e) {
+			logger.error("用户更新数据异常", e.getMessage());
+			throw new Exception(e);
+		} finally {
+			this.close();
+		}
+		return result;
+	}
+	
+	
+	/**
+	 * 更改用户
+	 */
+	@Override
+	public int update(String userName,int status) throws Exception {
+		int result = 0;
+		try {
+			Object[] partObj = { status,userName };
+			String sql = "update sys_user set status=?   where user_name=?";
 			result = this.update(sql.toString(), partObj);
 		} catch (Exception e) {
 			logger.error("用户更新数据异常", e.getMessage());
@@ -245,7 +272,7 @@ public class UsersDaoImpl extends BaseDao implements IUsersDao {
 	public UserBean getUser(String username, String password) throws Exception {
 		UserBean userbean = new UserBean();
 		try {
-			Object[] partObj = { username,password};
+			Object[] partObj = { username, password };
 			StringBuffer sql = new StringBuffer(512);
 			sql.append("select * from sys_user where user_name=? and password=?");
 			ResultSet result = this.select(sql.toString(), partObj);
@@ -253,6 +280,7 @@ public class UsersDaoImpl extends BaseDao implements IUsersDao {
 				userbean.setId(result.getInt("id"));
 				userbean.setUserName(result.getString("user_name"));
 				userbean.setEmail(result.getString("email"));
+				userbean.setStatus(result.getInt("status"));
 			}
 		} catch (Exception e) {
 			logger.error("用户查询数据异常", e.getMessage());

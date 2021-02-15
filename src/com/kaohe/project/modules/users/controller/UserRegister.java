@@ -10,11 +10,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.kaohe.project.modules.users.dao.IUsersDao;
+import com.kaohe.project.modules.users.dao.bean.UserBean;
 import com.kaohe.project.modules.users.dao.impl.UsersDaoImpl;
 import com.kaohe.project.modules.users.entity.User;
+import com.kaohe.project.sysconfig.utils.ency.MD5;
 
 /**
-*
+*用户注册接口
 * @author liangrui
 * @date 2021-02-09
 */
@@ -69,13 +71,25 @@ public class UserRegister extends HttpServlet {
 			request.setAttribute("tips", "服务端验证密码有误");
 			dispatcher.forward(request, response);
 		}
+	
 		//开始注册用户
 		User user=new User();
 		user.setUserName(username);
 		user.setEmail(email);
-		user.setPassword(password1);
+		//md5和盐加密，为了好复制，去掉用户名的盐
+		user.setPassword(MD5.generateMd5(password1));
 		try {
-			userdao.add(user);
+			//用户是否存在
+			UserBean getusre=userdao.getUser(username);
+			if(getusre!=null&&getusre.getId()!=null&&getusre.getId()>0) {
+				request.setAttribute("tips", "账号已存在！");
+				dispatcher.forward(request, response);
+			}
+			int count=userdao.add(user);
+			if(count<=0) {
+				request.setAttribute("tips", "注册失败，请遇管理员联系");
+				dispatcher.forward(request, response);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			request.setAttribute("tips", "注册异常:"+e.getMessage());

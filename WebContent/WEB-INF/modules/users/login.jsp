@@ -28,6 +28,7 @@
       </div>
     </div>
     <div class="form__content">
+       <a href="<%=basePath%>/ShowUserRegister">我要注册</a>
       <h5>${tips}</h5>
       <h1>欢迎使用考核系统</h1>
       <div class="styled-input">
