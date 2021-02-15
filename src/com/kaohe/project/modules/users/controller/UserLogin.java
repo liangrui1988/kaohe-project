@@ -1,6 +1,7 @@
 package com.kaohe.project.modules.users.controller;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -14,9 +15,11 @@ import com.kaohe.project.modules.users.dao.IUsersDao;
 import com.kaohe.project.modules.users.dao.bean.UserBean;
 import com.kaohe.project.modules.users.dao.impl.UsersDaoImpl;
 import com.kaohe.project.sysconfig.utils.ency.MD5;
+import com.octo.captcha.module.servlet.image.SimpleImageCaptchaServlet;
 
 /**
- *用户登录接口
+ * 用户登录接口
+ * 
  * @author liangrui
  * @date 2021-02-09
  */
@@ -45,28 +48,38 @@ public class UserLogin extends HttpServlet {
 	}
 
 	/**
+	 * @throws IOException 
+	 * @throws ServletException 
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
-		request.setCharacterEncoding("UTF-8");
 		String username = request.getParameter("nickname");
 		String password = request.getParameter("password");
 		RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/modules/users/login.jsp");
-		if (username == null || username.equals("")) {
-			request.setAttribute("tips", "用户名为空");
-			dispatcher.forward(request, response);
-		}
-		if (password == null || password.equals("")) {
-			request.setAttribute("tips", "密码为空");
-			dispatcher.forward(request, response);
-		}
 		try {
+			if (username == null || username.equals("")) {
+				request.setAttribute("tips", "用户名为空");
+				dispatcher.forward(request, response);
+				return;
+			}
+			if (password == null || password.equals("")) {
+				request.setAttribute("tips", "密码为空");
+				dispatcher.forward(request, response);
+				return;
+			}
+			String userCaptchaResponse = request.getParameter("jcaptcha");
+			boolean captchaPassed = SimpleImageCaptchaServlet.validateResponse(request, userCaptchaResponse);
+			if (!captchaPassed) {
+				request.setAttribute("tips", "验证码有误");
+				dispatcher.forward(request, response);
+				return;
+			}
+
 			HttpSession session = request.getSession();
-			session.setMaxInactiveInterval(60*2);
+			session.setMaxInactiveInterval(60 * 2);
 			// 用户登录错3次，禁用用户
 			Integer loginCount = (Integer) session.getAttribute("loginCount_" + username);
 			if (loginCount == null) {
@@ -77,13 +90,13 @@ public class UserLogin extends HttpServlet {
 				dispatcher.forward(request, response);
 				return;
 			}
-			
+
 			UserBean userbean = userdao.getUser(username, MD5.generateMd5(password));
 			if (userbean == null || userbean.getId() == null || userbean.getId() <= 0) {
 				session.setAttribute("loginCount_" + username, loginCount + 1);
 				if (loginCount == 3) {
-					//若异常3次，这里把用户状态禁用
-					userdao.update(username,1);
+					// 若异常3次，这里把用户状态禁用
+					userdao.update(username, 1);
 					request.setAttribute("tips", "用户输错3次，现在已被系统设禁用，请遇管理员联系！");
 					dispatcher.forward(request, response);
 					return;

@@ -13,6 +13,7 @@
 <link rel="stylesheet" href="<%=basePath%>/resources/css/login_style.css">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>登录</title>
+<script src=" <%=basePath%>/resources/js/jquery/jquery-3.5.1.min.js"></script>
 </head>
 <body>
 
@@ -41,11 +42,27 @@
         <div class="styled-input__placeholder"> <span class="styled-input__placeholder-text">密码</span> </div>
         <div class="styled-input__circle"></div>
       </div>
+          <div class="styled-input">
+        <img id="jcaptchajpgid" src="jcaptcha.jpg" onclick="getJcaptchajpg()"/>
+      </div>
+         <div class="styled-input">
+         <input type="text" name="jcaptcha" class="styled-input__input"  value="" />
+        <div class="styled-input__placeholder"> <span class="styled-input__placeholder-text">验证码</span> </div>
+        <div class="styled-input__circle"></div>
+      </div>
+   
+ 
+    
       <button type="submit" class="styled-button"> <span class="styled-button__real-text-holder"> <span class="styled-button__real-text">登录</span> <span class="styled-button__moving-block face"> <span class="styled-button__text-holder"> <span class="styled-button__text">登录</span> </span> </span><span class="styled-button__moving-block back"> <span class="styled-button__text-holder"> <span class="styled-button__text">登录</span> </span> </span> </span> </button>
     </div>
   </form>
 </main>
 <script  src="<%=basePath%>/resources/js/login_index.js"></script>
-
+<script>
+function getJcaptchajpg(){
+	var path="jcaptcha.jpg?flag="+Math.random();
+	$("#jcaptchajpgid").attr("src",path);
+}
+</script>
 </body>
 </html>
