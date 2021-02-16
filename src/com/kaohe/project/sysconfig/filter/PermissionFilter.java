@@ -19,7 +19,10 @@ import com.kaohe.project.modules.users.dao.bean.UserBean;
 import com.kaohe.project.modules.users.entity.Menu;
 
 /**
- * Servlet Filter implementation class PermissionFilter
+ * 权限拦截，对用户角色进行相应的控制资源
+ * 
+ * @author liangrui
+ * @date 2021-02-15
  */
 @WebFilter("/*")
 public class PermissionFilter implements Filter {
@@ -39,7 +42,7 @@ public class PermissionFilter implements Filter {
 	}
 
 	/**
-	 * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
+	 * 权限拦截，对用户角色进行相应的控制资源
 	 */
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
@@ -49,6 +52,7 @@ public class PermissionFilter implements Filter {
 		String currPath = httpSevletRequest.getRequestURI(); // 当前请求的URL
 		String contextPath = httpSevletRequest.getContextPath();
 		String puri = currPath.replace(contextPath, "");
+		System.out.println("puri=="+puri);
 		// 获取用户角色和权限信息
 		UserBean userinfo = (UserBean) session.getAttribute("userinfo");
 		List<String> menusLists = new ArrayList<String>();
@@ -69,15 +73,15 @@ public class PermissionFilter implements Filter {
 		}
 		// 获取系统权限，这里先写死，可优化从权限表中读取，
 		// 拿当前用户拥有的权限，和系统的权限进行对比，进行放行
-		if (currPath.equals("/ShowIndex")) { // 首页需要角色为1,或2的角色才能 访问权限，用户注册默认角色为2
+		if (puri.equals("/ShowIndex")) { // 首页需要角色为1,或2的角色才能 访问权限，用户注册默认角色为2
 			if (!menusLists.contains(puri)) {
 				httpSevletRequest.setAttribute("tips", "需要登录才能访问主页");
 				httpSevletRequest.getRequestDispatcher("/WEB-INF/modules/users/login.jsp").forward(httpSevletRequest,
 						response);
 				return;
 			}
-		} else if (currPath.equals(contextPath + "/ShowManager") || currPath.equals(contextPath + "/ShowUpdateUser")
-				|| currPath.equals(contextPath + "/UpdateUser")) {
+		} else if (puri.equals("/ShowManager") || puri.equals("/ShowUpdateUser")
+				|| puri.equals("/UpdateUser")) {
 			// 管理需要角色为1的权限
 			if (!menusLists.contains(puri)) {
 				httpSevletRequest.setAttribute("tips", "没有权限访问");

@@ -34,12 +34,10 @@ public class UserLogin extends HttpServlet {
 	 */
 	public UserLogin() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
+	 * 用户登录接口
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -49,12 +47,12 @@ public class UserLogin extends HttpServlet {
 	}
 
 	/**
-	 * @throws IOException 
-	 * @throws ServletException 
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response)
+	 * 用户登录接口
+	 *  @param nickname 名称
+	 *  @param password 密码
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
 		String username = request.getParameter("nickname");
@@ -103,12 +101,12 @@ public class UserLogin extends HttpServlet {
 				request.setAttribute("tips", "登录失败，用户或密码不存在！");
 				dispatcher.forward(request, response);
 			} else {
-				if (userbean.getStatus()== 1) {
+				if (userbean.getStatus() == 1) {
 					request.setAttribute("tips", "用户已被禁用，请遇管理员联系！");
 					dispatcher.forward(request, response);
 					return;
 				}
-				if (userbean.getStatus()==-1) {
+				if (userbean.getStatus() == -1) {
 					request.setAttribute("tips", "用户还没有进行邮箱验证，请完登录邮箱打开链接进行验证！");
 					dispatcher.forward(request, response);
 					return;

@@ -1,6 +1,8 @@
 package com.kaohe.project.modules.users.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -8,6 +10,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import com.kaohe.project.modules.users.dao.bean.UserBean;
 
 /**
  * 显示index页
@@ -23,20 +28,23 @@ public class ShowIndex extends HttpServlet {
      */
     public ShowIndex() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session = request.getSession();
+		UserBean userinfo = (UserBean) session.getAttribute("userinfo");
+		if (userinfo != null && userinfo.getUserName() != null) {
+			request.setAttribute("tips", "当前用户:"+userinfo.getUserName() );
+		}
 		 RequestDispatcher rd = getServletContext().getRequestDispatcher("/WEB-INF/index.jsp"); 
 			rd.forward(request, response);
 	}
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * 显示index页
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 

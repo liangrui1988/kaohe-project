@@ -1,0 +1,15 @@
+com.kaohe.project.modules.common
+com.kaohe.project.modules.common.page
+com.kaohe.project.modules.users.controller
+com.kaohe.project.modules.users.dao
+com.kaohe.project.modules.users.dao.bean
+com.kaohe.project.modules.users.dao.impl
+com.kaohe.project.modules.users.entity
+com.kaohe.project.modules.users.service
+com.kaohe.project.sysconfig.constants
+com.kaohe.project.sysconfig.exception
+com.kaohe.project.sysconfig.filter
+com.kaohe.project.sysconfig.jdbc
+com.kaohe.project.sysconfig.utils
+com.kaohe.project.sysconfig.utils.ency
+test

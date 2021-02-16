@@ -7,7 +7,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.mysql.jdbc.Statement;
-
+/**
+ * jdbc基类
+ * 
+ * @author liangrui
+ * @date 2021-02-15
+ */
 public class BaseDao {
 
 	Connection conn = null;

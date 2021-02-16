@@ -24,16 +24,7 @@ public class EmailVerify extends HttpServlet {
 	IUsersDao userdao = new UsersDaoImpl();
 
 	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
-	public EmailVerify() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
+	 * 邮箱验证激活
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -42,29 +33,26 @@ public class EmailVerify extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		String code = request.getParameter("code");
 		RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/modules/users/register.jsp");
-
 		try {
 			int count = userdao.updateByCode(code);
 			if (count <= 0) {
 				request.setAttribute("tips", "激活失败！末能找到对应的code");
 				dispatcher.forward(request, response);
+				return;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			request.setAttribute("tips", "激活异常，请联系管理员");
 			dispatcher.forward(request, response);
+			return;
 		}
 		request.setAttribute("tips", "激活成功，请您登录！");
 		request.getRequestDispatcher("/WEB-INF/modules/users/login.jsp").forward(request, response);
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
+
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 

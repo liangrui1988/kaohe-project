@@ -32,7 +32,6 @@ public class ShowUserLongin extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		//检查是否登录
-		
 		 RequestDispatcher rd = getServletContext().getRequestDispatcher("/WEB-INF/modules/users/login.jsp"); 
 		rd.forward(request, response);
 	}

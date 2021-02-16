@@ -15,6 +15,7 @@ import com.kaohe.project.modules.common.ResultBean;
 import com.kaohe.project.modules.users.dao.IUsersDao;
 import com.kaohe.project.modules.users.dao.impl.UsersDaoImpl;
 import com.kaohe.project.modules.users.entity.User;
+import com.kaohe.project.sysconfig.utils.ency.MD5;
 
 /**
  * 修改用户信息
@@ -27,18 +28,7 @@ public class UpdateUser extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	IUsersDao userdao = new UsersDaoImpl();
 
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
-	public UpdateUser() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		RequestDispatcher dispatcher = request.getRequestDispatcher("/noGet.jsp");
@@ -47,8 +37,7 @@ public class UpdateUser extends HttpServlet {
 	}
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response)
+	 * 修改用户信息
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -57,8 +46,8 @@ public class UpdateUser extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		String id = request.getParameter("id");
 		String email = request.getParameter("email");
-		String password1 = request.getParameter("password1");
-		String password2 = request.getParameter("password2");
+		String password1 = request.getParameter("password");
+		String password2 = request.getParameter("repeatPassword");
 		String status = request.getParameter("status");
         ResultBean rb=new ResultBean(true,"请求成功");
 		if (email == null || email.equals("")) {
@@ -83,7 +72,7 @@ public class UpdateUser extends HttpServlet {
 				out.flush();
 				return;
 			} 
-			user.setPassword(password1);
+			user.setPassword(MD5.generateMd5(password1));
 		}
 		try {
 			int count=userdao.update(user);

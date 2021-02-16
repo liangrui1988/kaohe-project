@@ -28,7 +28,7 @@ public class UsersDaoImpl extends BaseDao implements IUsersDao {
 	protected Logger logger = LoggerFactory.getLogger(getClass());
 
 	/**
-	 * 查询用户列表
+	 *  查询用户列表
 	 * 
 	 * @throws Exception
 	 */
@@ -187,11 +187,12 @@ public class UsersDaoImpl extends BaseDao implements IUsersDao {
 		try {
 			String password = user.getPassword();
 			Object[] partObj = { user.getStatus(), user.getEmail(), user.getId() };
-			String sql = "update sys_user set status=? and email=?  where id=?";
+			String sql = "update sys_user set status=? , email=?  where id=?";
 			if (password != null && !password.equals("")) {
 				partObj = new Object[] { user.getStatus(), user.getPassword(), user.getEmail(), user.getId() };
-				sql = "update sys_user set status=? and password=? and email=? where id=?";
+				sql = "update sys_user set `status`=? , `password`=? , `email`=? where id=?";
 			}
+			logger.info("update sql=="+ sql);
 			result = this.update(sql.toString(), partObj);
 		} catch (Exception e) {
 			logger.error("用户更新数据异常", e.getMessage());
@@ -261,6 +262,7 @@ public class UsersDaoImpl extends BaseDao implements IUsersDao {
 		}
 		return userbean;
 	}
+
 
 	@Override
 	public Set<String> getUserRole(String username) {
