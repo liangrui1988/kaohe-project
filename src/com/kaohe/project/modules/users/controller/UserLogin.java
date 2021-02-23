@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.kaohe.project.modules.users.dao.IUsersDao;
 import com.kaohe.project.modules.users.dao.bean.UserBean;
 import com.kaohe.project.modules.users.dao.impl.UsersDaoImpl;
@@ -41,15 +43,19 @@ public class UserLogin extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		RequestDispatcher dispatcher = request.getRequestDispatcher("/noGet.jsp");
-		dispatcher.forward(request, response);
+		// RequestDispatcher dispatcher = request.getRequestDispatcher("/noGet.jsp");
+		// dispatcher.forward(request, response);
+		doPost(request, response);
 
 	}
 
 	/**
 	 * 用户登录接口
-	 *  @param nickname 名称
-	 *  @param password 密码
+	 * 
+	 * @param nickname
+	 *            名称
+	 * @param password
+	 *            密码
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -59,12 +65,12 @@ public class UserLogin extends HttpServlet {
 		String password = request.getParameter("password");
 		RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/modules/users/login.jsp");
 		try {
-			if (username == null || username.equals("")) {
+			if (StringUtils.isBlank(username)) {
 				request.setAttribute("tips", "用户名为空");
 				dispatcher.forward(request, response);
 				return;
 			}
-			if (password == null || password.equals("")) {
+			if (StringUtils.isBlank(password)) {
 				request.setAttribute("tips", "密码为空");
 				dispatcher.forward(request, response);
 				return;
@@ -90,13 +96,15 @@ public class UserLogin extends HttpServlet {
 			}
 			UserBean userbean = userdao.getUser(username, MD5.generateMd5(password));
 			if (userbean == null || userbean.getId() == null || userbean.getId() <= 0) {
-				session.setAttribute("loginCount_" + username, loginCount + 1);
-				if (loginCount == 3) {
-					// 若异常3次，这里把用户状态禁用
-					userdao.update(username, 1);
-					request.setAttribute("tips", "用户输错3次，现在已被系统设禁用，请遇管理员联系！");
-					dispatcher.forward(request, response);
-					return;
+				if (!"admin".equals(username)) {
+					session.setAttribute("loginCount_" + username, loginCount + 1);
+					if (loginCount == 3) {
+						// 若异常3次，这里把用户状态禁用
+						userdao.update(username, 1);
+						request.setAttribute("tips", "用户输错3次，现在已被系统设禁用，请遇管理员联系！");
+						dispatcher.forward(request, response);
+						return;
+					}
 				}
 				request.setAttribute("tips", "登录失败，用户或密码不存在！");
 				dispatcher.forward(request, response);

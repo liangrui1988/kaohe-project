@@ -1,9 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
-    pageEncoding="utf-8"%>
- <%
-	String appContext = request.getContextPath();
-	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
-			+ appContext;
+	pageEncoding="utf-8"%>
+<%
+	String basePath = request.getContextPath();
 	String tips = request.getParameter("tips");
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -14,29 +12,33 @@
 
 <link href="<%=basePath%>/resources/css/pager.css" rel="stylesheet"
 	type="text/css" />
-	
 
-<script src=" <%=basePath%>/resources/js/jquery/jquery-3.5.1.min.js"></script>
-<script src=" <%=basePath%>/resources/js/common.js"></script>
+
+<script src="<%=basePath%>/resources/js/jquery/jquery-3.5.1.min.js"></script>
+<script src="<%=basePath%>/resources/js/common.js"></script>
 <style>
 table, th, td {
-  border: 1px solid black;
-  border-collapse: collapse;
+	border: 1px solid black;
+	border-collapse: collapse;
 }
 </style>
 </head>
 
 <body>
-     ${tips}<br/>
-     <a href="<%=basePath%>/ShowIndex">首页</a>
-     <br/>
-        <form action="" class="breadcrumb form-search " id="_search_form">
-             &nbsp;登陆名: <input class="input-xlarge" name="userName"  id="_userName" type="text" />
-			 &nbsp;<input id="_search_submit" class="btn btn-primary" type="button" value="查询"/>
-		</form>
-<br/>
+	${tips}
+	<br />
+	<a href="<%=basePath%>/ShowIndex">首页</a>
+	<br />
+	<!--   <form action="" class="breadcrumb form-search " id="_search_form"> -->
+	&nbsp;登陆名:
+	<input class="input-xlarge" name="userName" id="_userName" type="text" />
+	&nbsp;
+	<input id="_search_submit" class="btn btn-primary" type="button"
+		value="查询" />
+	<!-- 	</form> -->
+	<br />
 	<div class="panel panel-default">
-		<table id="_user_table" class="table table-striped"  b>
+		<table id="_user_table" class="table table-striped" b>
 			<thead>
 				<tr>
 					<th width="10%">序号</th>
@@ -48,20 +50,14 @@ table, th, td {
 					<th width="20%">操作</th>
 				</tr>
 			</thead>
-
 			<tbody>
-				
 			</tbody>
-
 		</table>
-
-    <div class="pagination" id="_pagination">
-    
-</div>
+		<div class="pagination" id="_pagination"></div>
 	</div>
-	
-	
-<script type="text/javascript">
+
+
+	<script type="text/javascript">
 
 //初始化
 $(function() {
@@ -76,13 +72,11 @@ $(function() {
 function callbak_page(returnDatas)
 {
 	//alert(JSON.stringify(returnDatas));
-	
 	var tableHTML = "";
 	var trContext = $("#_user_table");
 	//$("#_user_table tbody tr").eq(0).nextAll().remove();
 	$("#_user_table tbody tr").remove();
 	var returnData = returnDatas.data.items;
-	
 	if(returnData==null){
 	  return;
 	}
@@ -92,7 +86,6 @@ function callbak_page(returnDatas)
 	if(returnData[i].status==1){
 		statusname="禁用"
 	}
-	
 	var date = new Date(returnData[i].createTime);
 	Y = date.getFullYear() + '-';
 	M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
@@ -100,8 +93,7 @@ function callbak_page(returnDatas)
 	h = date.getHours() + ':';
 	m = date.getMinutes() + ':';
 	s = date.getSeconds(); 
-	var cdate=Y+M+D+h+m+s; //呀麻碟
-	
+	var cdate=Y+M+D+h+m+s; //
 	//状态处理
 	//var sta=returnData[i].status;
 	var staName="";
@@ -109,7 +101,6 @@ function callbak_page(returnDatas)
 	var operation=''
 				   +'&nbsp;&nbsp;<a href="<%=basePath%>/ShowUpdateUser?id='+returnData[i].id+'">修改</a>'
 				  /*  +'&nbsp;&nbsp;<a href="#" onclick="delUser(this,'+returnData[i].id+')">删除</a>'; */
-				   
 	tableHTML += "<tr>" + "<td>"
 				+ (j + 1)
 				+ "</td>"
@@ -135,7 +126,6 @@ function callbak_page(returnDatas)
 	
 	}
 	trContext.append(tableHTML);
-
 }
 
 //查询
@@ -143,7 +133,6 @@ $("#_search_submit").click(
 	function(){
 	 var param=getParam();
 	 sendPageRequst("<%=basePath%>/UserList",param);
-	   
 	  // sendGetReq(getContextPath()+"/sys/user/list",param,"");
 });
 
@@ -151,7 +140,6 @@ $("#_search_submit").click(
 function getParam()
 {				
 	 var param=new Object();	
-	
 	 var _userName=$("#_userName").val();
 	 if(_userName!=""){
 		 param.userName=_userName;
@@ -163,15 +151,10 @@ function getParam()
 //删除用户
 function delUser(obj,id)
 {
-	
 	var result=confirm("确定要删除用户吗？");
-	
-	
-
 	if(!result){
 		return;
 	}
-	
 	if(id==""){
 		alert("参数错误");
 		return;
@@ -198,10 +181,17 @@ function delUser(obj,id)
 	});
 }
 
-
-
-
-</script>
+document.onkeydown = function (e) { // 回车提交表单
+	// 兼容FF和IE和Opera
+	    var theEvent = window.event || e;
+	    var code = theEvent.keyCode || theEvent.which || theEvent.charCode;
+	    if (code == 13) {
+	    	//查询
+	    	 var param=getParam();
+	    	sendPageRequst("<%=basePath%>/UserList", param);
+			}
+		}
+	</script>
 
 
 </body>

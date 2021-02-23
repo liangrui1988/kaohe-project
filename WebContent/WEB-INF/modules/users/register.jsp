@@ -1,13 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <%
-	String appContext = request.getContextPath();
-	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
-			+ appContext;
+	String basePath = request.getContextPath();
 	String tips = request.getParameter("tips");
 %>
 <!-- JSTL 核心标签库 -->
- <%@ taglib uri='http://java.sun.com/jsp/jstl/core' prefix='c'%>
+<%@ taglib uri='http://java.sun.com/jsp/jstl/core' prefix='c'%>
 <%-- <%@taglib prefix="c" uri="http://java.sun.com/jstl/core_rt" %>
  --%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -22,8 +20,8 @@
 <title>用户注册</title>
 </head>
 <body>
-   <a href="<%=basePath%>/ShowUserLongin">已注册，我要登录</a>
-     <br/>
+	<a href="<%=basePath%>/ShowUserLongin">已注册，我要登录</a>
+	<br />
 	<div class='body_main'>
 		<!-- start main content -->
 		<div class='index_box' style='margin-top: 20px;'>
@@ -33,14 +31,13 @@
 			<div class='box_title'>
 				<div class='text_content'>
 					<h1>用户注册 ${tips}</h1>
-					<h3>
-					</h3>
+					<h3></h3>
 				</div>
 			</div>
 			<div class='box_main'>
 				<div id="register" class="register">
-					<form id="form" action="<%=appContext%>/UserRegister"
-						method="post" onSubmit="return check();">
+					<form id="form" action="<%=basePath%>/UserRegister" method="post"
+						onSubmit="return check();">
 						<div id="form_submit" class="form_submit">
 							<div class="fieldset">
 								<div class="field-group">
@@ -90,7 +87,7 @@
 								</div>
 
 
-					<!-- 			<div class="field-group">
+								<!-- 			<div class="field-group">
 									<label class="required title">邮箱验证码</label> <span
 										class="control-group" id="code_input">
 										<div class="input_add_background" style="margin-right: 15px;">

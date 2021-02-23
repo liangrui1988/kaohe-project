@@ -30,7 +30,7 @@ public class EmailUtil {
 	public final static String userName = "rui_dev2";// 登陆名
 	public final static String password = "FMUXDUPAHWZYSKMA";// smt协议 密码  网页 ruidev123456%
 	//DIOSNZEVTEERLMFO
-	//FMUXDUPAHWZYSKMA
+	//FMUXDUPAHWZYSKMA 
 	public final static int smtpPort = 25;//
 	public final static String sslSmtpPort = "465";//
 
@@ -155,11 +155,12 @@ public class EmailUtil {
 				email.addTo(toEmail, toEmailName);// 1067165280@qq.com
 													// rui_dev@126.com
 			}
-
+			email.addCc(from);
 			email.send();
 		} catch (EmailException e) {
 			logger.error("邮件发送异常!{}" + e.getMessage());
 			e.printStackTrace();
+			throw e;
 		}
 
 	}
@@ -224,7 +225,7 @@ public class EmailUtil {
 		// 发送人
 		email.setFrom(from);// 设置字段的电子邮件使用指定的地址。电子邮件
 		email.setSubject("x送行-梁实秋");
-
+		email.addCc("rui_dev2@163.com");
 		email.setMsg("x发邮件simple test");
 		// 接收人
 		email.addTo("1067165280@qq.com", "toName");// 382453602@qq.com

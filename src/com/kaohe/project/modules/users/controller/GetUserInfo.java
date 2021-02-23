@@ -34,7 +34,7 @@ public class GetUserInfo extends HttpServlet {
 	}
 
 	/**
-	 * @see 
+	 * @see
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {

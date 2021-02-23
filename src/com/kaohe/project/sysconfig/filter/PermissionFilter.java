@@ -52,16 +52,15 @@ public class PermissionFilter implements Filter {
 		String currPath = httpSevletRequest.getRequestURI(); // 当前请求的URL
 		String contextPath = httpSevletRequest.getContextPath();
 		String puri = currPath.replace(contextPath, "");
-		System.out.println("puri=="+puri);
+		System.out.println("puri==" + puri);
 		// 获取用户角色和权限信息
 		UserBean userinfo = (UserBean) session.getAttribute("userinfo");
 		List<String> menusLists = new ArrayList<String>();
 		if (userinfo != null && userinfo.getUserName() != null && !"".equals(userinfo.getUserName())) {
-			//登录过就直接跳到主页
-			if (puri.equals("/ShowUserLongin")) {
+			// 登录过就直接跳到主页
+			if ("/ShowUserLongin".equals(puri)) {
 				httpSevletRequest.setAttribute("tips", "你已登录:" + userinfo.getUserName());
-				httpSevletRequest.getRequestDispatcher("/WEB-INF/index.jsp").forward(httpSevletRequest,
-						response);
+				httpSevletRequest.getRequestDispatcher("/WEB-INF/index.jsp").forward(httpSevletRequest, response);
 				return;
 			}
 			List<Menu> menus = userinfo.getMenus(); // 用户的权限列表
@@ -73,15 +72,14 @@ public class PermissionFilter implements Filter {
 		}
 		// 获取系统权限，这里先写死，可优化从权限表中读取，
 		// 拿当前用户拥有的权限，和系统的权限进行对比，进行放行
-		if (puri.equals("/ShowIndex")) { // 首页需要角色为1,或2的角色才能 访问权限，用户注册默认角色为2
+		if ("/ShowIndex".equals(puri)) { // 首页需要角色为1,或2的角色才能 访问权限，用户注册默认角色为2
 			if (!menusLists.contains(puri)) {
 				httpSevletRequest.setAttribute("tips", "需要登录才能访问主页");
 				httpSevletRequest.getRequestDispatcher("/WEB-INF/modules/users/login.jsp").forward(httpSevletRequest,
 						response);
 				return;
 			}
-		} else if (puri.equals("/ShowManager") || puri.equals("/ShowUpdateUser")
-				|| puri.equals("/UpdateUser")) {
+		} else if ("/ShowManager".equals(puri) || "/ShowUpdateUser".equals(puri) || "/UpdateUser".equals(puri)) {
 			// 管理需要角色为1的权限
 			if (!menusLists.contains(puri)) {
 				httpSevletRequest.setAttribute("tips", "没有权限访问");

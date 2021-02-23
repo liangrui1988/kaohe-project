@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.alibaba.fastjson.JSON;
 import com.kaohe.project.modules.common.ResultBean;
 import com.kaohe.project.modules.common.page.QueryResult;
@@ -42,15 +44,14 @@ public class UserList extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         request.setCharacterEncoding("UTF-8");
         ResultBean rb=new ResultBean(true,"请求成功");
-        
 		String pageIndex = request.getParameter("pageIndex");
 		String pagesize = request.getParameter("pagesize");
 		String userName = request.getParameter("userName");
-		if(pageIndex==null||"".equals(pageIndex)) {
+		if(StringUtils.isBlank(pageIndex)) {
 			pageIndex="0";
 		}
-		if(pagesize==null||"".equals(pagesize)) {
-			pagesize="20";
+		if(StringUtils.isBlank(pagesize)) {
+			pagesize="10";
 		}
 		UserBean bean=new UserBean();
 		bean.setUserName(userName);

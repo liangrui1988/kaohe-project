@@ -2,20 +2,19 @@ package com.kaohe.project.modules.users.controller;
 
 import java.io.IOException;
 import java.io.OutputStream;
-
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import com.alibaba.fastjson.JSON;
 import com.kaohe.project.modules.common.ResultBean;
 import com.kaohe.project.modules.users.dao.IUsersDao;
 import com.kaohe.project.modules.users.dao.impl.UsersDaoImpl;
 import com.kaohe.project.modules.users.entity.User;
 import com.kaohe.project.sysconfig.utils.ency.MD5;
+
 
 /**
  * 修改用户信息
@@ -31,9 +30,9 @@ public class UpdateUser extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		RequestDispatcher dispatcher = request.getRequestDispatcher("/noGet.jsp");
-		dispatcher.forward(request, response);
-
+//		RequestDispatcher dispatcher = request.getRequestDispatcher("/noGet.jsp");
+//		dispatcher.forward(request, response);
+		doPost(request, response);
 	}
 
 	/**
@@ -50,7 +49,7 @@ public class UpdateUser extends HttpServlet {
 		String password2 = request.getParameter("repeatPassword");
 		String status = request.getParameter("status");
         ResultBean rb=new ResultBean(true,"请求成功");
-		if (email == null || email.equals("")) {
+		if (org.apache.commons.lang.StringUtils.isBlank(email)) {
 			rb.setSuccess(false);
 			rb.setMessage("服务端验证有误");
 			OutputStream out = response.getOutputStream();

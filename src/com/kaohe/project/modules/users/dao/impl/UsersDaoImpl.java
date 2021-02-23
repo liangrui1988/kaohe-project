@@ -8,12 +8,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import com.kaohe.project.modules.common.page.Query;
 import com.kaohe.project.modules.common.page.QueryResult;
 import com.kaohe.project.modules.users.dao.IUsersDao;
 import com.kaohe.project.modules.users.dao.bean.UserBean;
 import com.kaohe.project.modules.users.entity.Menu;
 import com.kaohe.project.modules.users.entity.User;
 import com.kaohe.project.sysconfig.jdbc.BaseDao;
+
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +31,7 @@ public class UsersDaoImpl extends BaseDao implements IUsersDao {
 	protected Logger logger = LoggerFactory.getLogger(getClass());
 
 	/**
-	 *  查询用户列表
+	 * 查询用户列表
 	 * 
 	 * @throws Exception
 	 */
@@ -36,27 +39,30 @@ public class UsersDaoImpl extends BaseDao implements IUsersDao {
 	public QueryResult<UserBean> getUserList(int page, int pagesize, UserBean user) throws Exception {
 		// 组合分页信息
 		QueryResult<UserBean> queryResult = new QueryResult<UserBean>();
-		Object[] parmObj = { page, pagesize };
+		Query query = new Query();
+		query.setPageIndex(page);
+		query.setPageSize(pagesize);
+		Object[] parmObj = { query.getStartRow(), query.getPageSize() };
 		Object[] parmObjCount = {};
-
 		try {
 			// 查询列表
 			StringBuffer sql = new StringBuffer(512);
-			sql.append("select * from sys_user");
+			sql.append("select * from sys_user where type!=\"1\" or isnull(`type`) ");
 			// 取总条数
 			StringBuffer sqlCount = new StringBuffer(512);
-			sqlCount.append("select count(1) from sys_user");
+			sqlCount.append("select count(1) from sys_user where type!=\"1\" or isnull(`type`) ");
 			// 条件处理
-			if (user != null && user.getUserName() != null && !"".equals(user.getUserName())) {
-				sql.append(" where user_name like '"+user.getUserName()+"%' ");
-				sqlCount.append(" where user_name like '"+user.getUserName()+"%' ");
-//				parmObj = new Object[] { page, pagesize };
-//				parmObjCount = new Object[] {  };
+			if (user != null && StringUtils.isNotBlank(user.getUserName())) {
+				sql.append(" and user_name like '" + user.getUserName() + "%' ");
+				sqlCount.append(" and user_name like '" + user.getUserName() + "%' ");
+				// parmObj = new Object[] { page, pagesize };
+				// parmObjCount = new Object[] { };
 			}
 			// 分页
 			sql.append(" order by id  ");
 			sql.append(" limit ? , ?  ");
 			logger.info("sql>>> \n" + sql.toString());
+			logger.info("page>>> \n StartRow=" + query.getStartRow() + " pagesize=" + pagesize);
 			ResultSet result = select(sql.toString(), parmObj);
 			List<UserBean> userBeans = new ArrayList<UserBean>();
 			// DateFormat df = new SimpleDateFormat("YYYY-mm-DD HH:MM:SS");
@@ -74,6 +80,7 @@ public class UsersDaoImpl extends BaseDao implements IUsersDao {
 			}
 			// 总页数 和 取多少条
 			int count = this.getCount(sqlCount.toString(), parmObjCount);
+			queryResult.setCurrentPage(page);
 			queryResult.setPages(count, pagesize);
 			queryResult.setItems(userBeans);
 		} catch (Exception e) {
@@ -158,7 +165,7 @@ public class UsersDaoImpl extends BaseDao implements IUsersDao {
 	public int add(User user) throws Exception {
 		int result = 0;
 		try {
-			Object[] partObj = { user.getUserName(), user.getPassword(), user.getEmail(), -1,user.getCode() };
+			Object[] partObj = { user.getUserName(), user.getPassword(), user.getEmail(), -1, user.getCode() };
 			StringBuffer sql = new StringBuffer(512);
 			sql.append("INSERT INTO `sys_user`(`user_name`, `password`,  `email`, `status`,`code`) VALUES (?,?,?,?,?)");
 			int id = this.insertGetId(sql.toString(), partObj);
@@ -192,7 +199,7 @@ public class UsersDaoImpl extends BaseDao implements IUsersDao {
 				partObj = new Object[] { user.getStatus(), user.getPassword(), user.getEmail(), user.getId() };
 				sql = "update sys_user set `status`=? , `password`=? , `email`=? where id=?";
 			}
-			logger.info("update sql=="+ sql);
+			logger.info("update sql==" + sql);
 			result = this.update(sql.toString(), partObj);
 		} catch (Exception e) {
 			logger.error("用户更新数据异常", e.getMessage());
@@ -202,16 +209,15 @@ public class UsersDaoImpl extends BaseDao implements IUsersDao {
 		}
 		return result;
 	}
-	
-	
+
 	/**
 	 * 更改用户,根据名字
 	 */
 	@Override
-	public int update(String userName,int status) throws Exception {
+	public int update(String userName, int status) throws Exception {
 		int result = 0;
 		try {
-			Object[] partObj = { status,userName };
+			Object[] partObj = { status, userName };
 			String sql = "update sys_user set status=?   where user_name=?";
 			result = this.update(sql.toString(), partObj);
 		} catch (Exception e) {
@@ -241,6 +247,7 @@ public class UsersDaoImpl extends BaseDao implements IUsersDao {
 		}
 		return result;
 	}
+
 	@Override
 	public UserBean getUser(String username) throws Exception {
 		UserBean userbean = new UserBean();
@@ -262,7 +269,6 @@ public class UsersDaoImpl extends BaseDao implements IUsersDao {
 		}
 		return userbean;
 	}
-
 
 	@Override
 	public Set<String> getUserRole(String username) {
@@ -301,6 +307,7 @@ public class UsersDaoImpl extends BaseDao implements IUsersDao {
 				userbean.setUserName(result.getString("user_name"));
 				userbean.setEmail(result.getString("email"));
 				userbean.setStatus(result.getInt("status"));
+				userbean.setType(result.getString("type"));
 			}
 		} catch (Exception e) {
 			logger.error("用户查询数据异常", e.getMessage());

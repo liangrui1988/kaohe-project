@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.mail.EmailException;
 
 import com.kaohe.project.modules.users.dao.IUsersDao;
@@ -41,8 +42,9 @@ public class UserRegister extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		RequestDispatcher dispatcher = request.getRequestDispatcher("/noGet.jsp");
-		dispatcher.forward(request, response);
+//		RequestDispatcher dispatcher = request.getRequestDispatcher("/noGet.jsp");
+//		dispatcher.forward(request, response);
+		doPost(request, response);
 	}
 
 	/**
@@ -62,15 +64,15 @@ public class UserRegister extends HttpServlet {
 		String password2 = request.getParameter("password2");
 		RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/modules/users/register.jsp");
 		// 验证
-		if (username == null || username.equals("")) {
+		if (StringUtils.isBlank(username)) {
 			request.setAttribute("tips", "服务端验证有误");
 			dispatcher.forward(request, response);
 		}
-		if (email == null || email.equals("")) {
+		if (StringUtils.isBlank(email)) {
 			request.setAttribute("tips", "服务端验证有误");
 			dispatcher.forward(request, response);
 		}
-		if (password1 == null || password1.equals("") || !password1.equals(password2)) {
+		if (StringUtils.isBlank(password1) || !password1.equals(password2)) {
 			request.setAttribute("tips", "服务端验证密码有误");
 			dispatcher.forward(request, response);
 		}

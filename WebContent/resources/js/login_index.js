@@ -6,19 +6,19 @@ var placeholders = document.querySelectorAll('.styled-input__placeholder-text'),
 placeholders.forEach(function (el, i) {
     var value = el.innerText,
         html = '';
-    for (var _iterator = value, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-        var _ref;
+    for (var v_iterator = value, v_isArray = Array.isArray(v_iterator), v_i = 0, v_iterator = v_isArray ? v_iterator : v_iterator[Symbol.iterator]();;) {
+        var v_ref;
 
-        if (_isArray) {
-            if (_i >= _iterator.length) break;
-            _ref = _iterator[_i++];
+        if (v_isArray) {
+            if (v_i >= v_iterator.length) break;
+            v_ref = v_iterator[v_i++];
         } else {
-            _i = _iterator.next();
-            if (_i.done) break;
-            _ref = _i.value;
+            v_i = v_iterator.next();
+            if (v_i.done) break;
+            v_ref = v_i.value;
         }
 
-        var w = _ref;
+        var w = v_ref;
 
         if (!value) value = '&nbsp;';
         html += '<span class="letter">' + w + '</span>';
