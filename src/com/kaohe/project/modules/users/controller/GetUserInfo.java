@@ -14,6 +14,8 @@ import com.kaohe.project.modules.common.ResultBean;
 import com.kaohe.project.modules.users.dao.IUsersDao;
 import com.kaohe.project.modules.users.dao.bean.UserBean;
 import com.kaohe.project.modules.users.dao.impl.UsersDaoImpl;
+import com.kaohe.project.modules.users.service.IUsersService;
+import com.kaohe.project.modules.users.service.impl.UsersServiceImpl;
 
 /**
  * 显示用户信息
@@ -24,7 +26,7 @@ import com.kaohe.project.modules.users.dao.impl.UsersDaoImpl;
 @WebServlet("/GetUserInfo")
 public class GetUserInfo extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	IUsersDao userdao = new UsersDaoImpl();
+	IUsersService usersService = new UsersServiceImpl();
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -47,7 +49,7 @@ public class GetUserInfo extends HttpServlet {
 			rb.setMessage("id为空");
 		} else {
 			try {
-				UserBean result = userdao.get(Integer.valueOf(userId));
+				UserBean result = usersService.get(Integer.valueOf(userId));
 				rb.setData(result);
 			} catch (Exception e) {
 				rb.setSuccess(false);

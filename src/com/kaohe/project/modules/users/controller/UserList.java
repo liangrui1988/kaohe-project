@@ -17,6 +17,8 @@ import com.kaohe.project.modules.common.page.QueryResult;
 import com.kaohe.project.modules.users.dao.IUsersDao;
 import com.kaohe.project.modules.users.dao.bean.UserBean;
 import com.kaohe.project.modules.users.dao.impl.UsersDaoImpl;
+import com.kaohe.project.modules.users.service.IUsersService;
+import com.kaohe.project.modules.users.service.impl.UsersServiceImpl;
 
 /**
  * 用户列表管理页面
@@ -26,7 +28,7 @@ import com.kaohe.project.modules.users.dao.impl.UsersDaoImpl;
 @WebServlet("/UserList")
 public class UserList extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	IUsersDao userdao = new UsersDaoImpl();
+	IUsersService usersService = new UsersServiceImpl();
 
     /**
      * @see HttpServlet#HttpServlet()
@@ -57,7 +59,7 @@ public class UserList extends HttpServlet {
 		bean.setUserName(userName);
         QueryResult<UserBean> result = new QueryResult<UserBean>();
 		try {
-			result = userdao.getUserList(Integer.valueOf(pageIndex),Integer.valueOf(pagesize) , bean);
+			result = usersService.getUserList(Integer.valueOf(pageIndex),Integer.valueOf(pagesize) , bean);
 		} catch (Exception e) {
 			rb.setSuccess(false);
 			rb.setMessage("系统异常!"+e.getMessage());

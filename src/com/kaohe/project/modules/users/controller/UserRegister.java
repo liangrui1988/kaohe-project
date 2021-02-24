@@ -11,13 +11,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.mail.EmailException;
 
-import com.kaohe.project.modules.users.dao.IUsersDao;
 import com.kaohe.project.modules.users.dao.bean.UserBean;
-import com.kaohe.project.modules.users.dao.impl.UsersDaoImpl;
 import com.kaohe.project.modules.users.entity.User;
-import com.kaohe.project.sysconfig.utils.EmailUtil;
+import com.kaohe.project.modules.users.service.IUsersService;
+import com.kaohe.project.modules.users.service.impl.UsersServiceImpl;
 import com.kaohe.project.sysconfig.utils.ency.MD5;
 
 /**
@@ -29,7 +27,7 @@ import com.kaohe.project.sysconfig.utils.ency.MD5;
 @WebServlet("/UserRegister")
 public class UserRegister extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	IUsersDao userdao = new UsersDaoImpl();
+	IUsersService usersService = new UsersServiceImpl();
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -42,8 +40,6 @@ public class UserRegister extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-//		RequestDispatcher dispatcher = request.getRequestDispatcher("/noGet.jsp");
-//		dispatcher.forward(request, response);
 		doPost(request, response);
 	}
 
@@ -84,7 +80,7 @@ public class UserRegister extends HttpServlet {
 		user.setPassword(MD5.generateMd5(password1));
 		try {
 			// 用户是否存在
-			UserBean getusre = userdao.getUser(username);
+			UserBean getusre = usersService.getUser(username);
 			if (getusre != null && getusre.getId() != null && getusre.getId() > 0) {
 				request.setAttribute("tips", "账号已存在！");
 				dispatcher.forward(request, response);
@@ -105,16 +101,7 @@ public class UserRegister extends HttpServlet {
 			sb.append("?code=");
 			sb.append(md5code);
 			sb.append("'>"+username+":请点击进行验证激活，若邮箱拦截，请复制链接单独打开验证</a>");
-			System.out.print(sb.toString());
-			try {
-				EmailUtil.sendContextEmailHTML(sb.toString(), "考核系统邮箱注册验证", email, email);
-			} catch (EmailException e) {
-				e.printStackTrace();
-				request.setAttribute("tips", "验证邮件发生失败！请检查邮箱是否正确或联系管理员");
-				dispatcher.forward(request, response);
-				return;
-			}
-			int count = userdao.add(user);
+			int count = usersService.add(user,sb.toString(), email);
 			if (count <= 0) {
 				//这里需要写撤销邮件逻辑，暂不
 				request.setAttribute("tips", "注册失败，请遇管理员联系");
